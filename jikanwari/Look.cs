@@ -10,7 +10,12 @@ namespace jikanwari
     {
         public int x = 0;
         public int y = 0; 
-        public Look() { }
+        public int z = 0;
+        public int classCount;
+        public Look(int n) 
+        {
+            classCount = n;
+        }
         public Look(Look look)
         {
             this.x = look.x;
@@ -18,7 +23,13 @@ namespace jikanwari
         }
         public void Next()
         {
-            if (y >= 3)
+            if (x >= 4 && y >= 3)
+            {
+                x = 0;
+                y = 0;
+                z++;
+            }//次のクラスへ
+            else if (y >= 3)
             {
                 y = 0;x++;
             }//X,Yを移動
@@ -29,7 +40,7 @@ namespace jikanwari
         }
         public bool End()
         {
-            if (x >= 4 && y >= 3) return true;
+            if (x >= 4 && y >= 3 && z>=classCount-1) return true;
             else return false;
         }
         public int count()

@@ -17,37 +17,25 @@ namespace jikanwari
         string jyukouClass;
         public DataTable jTable = new DataTable();
         public DataTable kTable = new DataTable();
+        public DataTable cTable = new DataTable();
 
         public int total;
-        public static string GetConnectionString()//接続文字列の取得
-        {
-            return "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\a\\source\\repos\\jikanwari\\jikanwari\\Database1.mdf;Integrated Security=True;Connect Timeout=30";//ConfigurationManager.ConnectionStrings["jikanwari.Properties.Settings.jikanwariDB"].ConnectionString;
-        }
+        
         public void SetJyugyouData()
         {
-            var connection = new SqlConnection();
-            string tbStr = "";
-            connection.ConnectionString = GetConnectionString();
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandText = @"SELECT * FROM Jyugyou";
-            var adapter = new SqlDataAdapter(command);
-            adapter.Fill(jTable);
-            command.CommandText = @"SELECT * FROM Kousi";
-            adapter =new SqlDataAdapter(command);
-            adapter.Fill(kTable);
-
-            connection.Close();
-            for (int rowindex = 0; rowindex < jTable.Rows.Count; rowindex++)
+            UseSQL useSQL = new UseSQL();
+            jTable=useSQL.UseSelect("Jyugyou");
+            kTable = useSQL.UseSelect("Kousi");
+            cTable = useSQL.UseSelect("Class");
+            string str="";
+            foreach(DataRow row in jTable.Rows)
             {
-                for (int colindex = 0; colindex < jTable.Columns.Count; colindex++)
-                {
-                    tbStr+=(jTable.Rows[rowindex][colindex].ToString() + " ");
-                }
-                tbStr+=("\n");
-
+                str += row[1].ToString();
+                str += "\n";
             }
-            //MessageBox.Show(tbStr);
+            MessageBox.Show(str);
+            useSQL.CloseDB();
+
         }
 
         public void SetTotal()
@@ -60,8 +48,30 @@ namespace jikanwari
             }
             foreach(DataRow row in jTable.Rows)
             {
-                total += (int)row["count"];
+                total += (int)row["Count"];
             }
+        }
+        public DataRow GetKoussiData(int id)//授業IDから講師の情報を取得
+        {
+            DataRow[] jdrs = jTable.Select("Id=" + id);
+            int kId = (int)jdrs[0]["KousiID"];
+            DataRow[] kdrs = kTable.Select("KousiID=" + kId);
+            return kdrs[0];
+        }
+        public string[] GetClass()
+        {
+           
+            string[] str = new string[cTable.Rows.Count];
+            for(int i = 0; i< cTable.Rows.Count; i++)
+            {
+                str[i] = cTable.Rows[i]["Class"].ToString();
+            }
+            
+            return str;
+        }
+        public int GetClassCount()
+        {
+            return cTable.Rows.Count;
         }
     }
 }

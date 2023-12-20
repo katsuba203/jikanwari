@@ -7,11 +7,17 @@ namespace jikanwari
     {
         Label[,] jLabels = new Label[4, 5];
         Label[,] kLabels = new Label[4, 5];
+        Control Control = new Control();
+
 
         public Form1()
         {
             InitializeComponent();
             setLabels();
+            
+            string[] item = Control.jyugyouData.GetClass();
+            comboBox1.Items.AddRange(item);
+
 
         }
         private void setLabels()
@@ -78,33 +84,7 @@ namespace jikanwari
 
         }
 
-        private void viewLabels(JyugyouData jyugyouData, JikanwariData jikanwariData)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 5; j++)
-                {
-                    int id = jikanwariData.jikanwari[i,j];
-                    jLabels[i, j].Text = "NULL";
-                     kLabels[i, j].Text = "NULL";
-                    DataRow[] jdrs = jyugyouData.jTable.Select("Id="+id);
-                    if (jdrs != null)
-                    {
-                        jLabels[i, j].Text = jdrs[0]["jyugyouName"].ToString();
-                        int kId= (int)jdrs[0]["kousiID"];
-                        DataRow[] kdrs = jyugyouData.kTable.Select("kousiID=" + id);
-                        //if (kdrs[0] != null)
-                        //{
-                             kLabels[i, j].Text = kdrs[0]["kousiName"].ToString();
-                        //}
 
-
-                    }
-                        
-                   
-                }
-            }
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -125,18 +105,20 @@ namespace jikanwari
 
         private void button2_Click(object sender, EventArgs e)
         {
-            JyugyouData jyugyouData = new JyugyouData();
-            jyugyouData.SetJyugyouData();
-            CreateJikanwari createJikanwari = new CreateJikanwari(jyugyouData);
-            viewLabels(jyugyouData, createJikanwari.jikanwariData);
+            Control.CreateJikanwari(jLabels, kLabels);
+
+            //viewLabels(jyugyouData, createJikanwari.jikanwariData);
 
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            int[] num = { 1, 2, 3, };
-            int[] num2 = num;
-            num2[0] = 0;
+
+
+            Form2 form2 = new Form2();
+            this.Visible = false;
+            form2.ShowDialog();
+
         }
 
 
